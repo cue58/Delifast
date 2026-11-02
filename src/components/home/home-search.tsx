@@ -37,7 +37,7 @@ export default function HomeSearch() {
             setQuery(event.target.value);
             setFeedback("");
           }}
-          placeholder="Un restaurant, un plat, un commerce…"
+          placeholder="Plat, adresse…"
           aria-label="Rechercher un restaurant, un plat ou un commerce"
           aria-invalid={feedback ? true : undefined}
           aria-describedby="search-status"

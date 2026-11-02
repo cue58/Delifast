@@ -950,19 +950,20 @@ h2 {
 
   .hero-grid {
     grid-template-columns: minmax(0, 1fr);
-    gap: 22px;
-    padding-top: 42px;
-    padding-bottom: 38px;
+    gap: 12px;
+    padding-top: 24px;
+    padding-bottom: 28px;
   }
 
   h1 {
     max-width: 520px;
     margin-top: 14px;
-    font-size: 43px;
+    margin-bottom: 14px;
+    font-size: 40px;
   }
 
   .hero-copy {
-    margin-bottom: 20px;
+    margin-bottom: 14px;
     font-size: 14px;
   }
 
@@ -978,11 +979,12 @@ h2 {
   .hero-meta {
     flex-wrap: wrap;
     gap: 12px;
+    margin-top: 12px;
     font-size: 10px;
   }
 
   .hero-visual {
-    min-height: 290px;
+    min-height: 248px;
     margin: 0 4px;
   }
 
@@ -992,7 +994,7 @@ h2 {
   }
 
   .floating-card {
-    bottom: 20px;
+    bottom: 40px;
     left: -4px;
     padding: 10px 12px;
   }
@@ -1182,7 +1184,7 @@ h2 {
     opacity: 0.58;
   }
 
-  body {
+  body:has(.mobile-nav) {
     padding-bottom: 62px;
   }
 }
@@ -1202,6 +1204,28 @@ h2 {
 }
 
 @media (max-width: 340px) {
+  .hero-grid {
+    gap: 8px;
+    padding-top: 12px;
+  }
+
+  h1 {
+    margin-bottom: 12px;
+    font-size: 38px;
+  }
+
+  .hero-copy {
+    margin-bottom: 12px;
+  }
+
+  .hero-meta {
+    margin-top: 10px;
+  }
+
+  .hero-visual {
+    min-height: 200px;
+  }
+
   .nav .brand {
     gap: 6px;
     font-size: 18px;
