@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import "./globals.css";
+import { FavoritesProvider } from "@/features/favorites/favorites-provider";
 
 export const metadata: Metadata = {
   title: "Delifast — Le meilleur de vos envies, au même endroit",
@@ -16,7 +17,9 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
     <html lang="fr">
-      <body>{children}</body>
+      <body>
+        <FavoritesProvider>{children}</FavoritesProvider>
+      </body>
     </html>
   );
 }

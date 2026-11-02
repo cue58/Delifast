@@ -1,55 +1,58 @@
 # Delifast
-Appli_de_vente_en_ligne
 
-## Application web
+Frontend de démonstration pour découvrir des restaurants et commerces à Ouagadougou. Le projet utilise Next.js App Router, React, TypeScript strict, Tailwind CSS et ESLint. Il n’est connecté à aucun backend ni service d’authentification.
 
-Socle initial de l’application Delifast, construit avec Next.js App Router, React, TypeScript strict, Tailwind CSS et ESLint. Cette version ne contient pas encore de parcours métier et n’est connectée à aucun service Supabase.
+## Pages et interactions
 
-## Accueil frontend
+L’accueil `/` conserve la direction artistique de `delifast-accueil-v1.html`; le fichier `index.html` historique ne remplace pas cette référence. Les pages catalogue et authentification reprennent leurs maquettes correspondantes.
 
-La route `/` reprend l’interface du fichier de référence `delifast-accueil-v1.html` conçu par Star. Toutes ses sections sont conservées. Les composants clients sont limités au menu mobile et à la saisie/validation de la recherche ; le contenu reste rendu côté serveur.
+Routes disponibles :
 
-Les cinq photographies de la référence sont hébergées dans `public/images/home/`, compressées en WebP et affichées avec `next/image` : préchargement du visuel principal, tailles adaptées et chargement différé des images secondaires. Il s’agit toujours de visuels de maquette, à remplacer par les contenus autorisés des partenaires avant une mise en production.
+- `/` — accueil, recherche, catégories et favoris.
+- `/catalogue` — catalogue fictif, recherche `?q=...`, filtre `?categorie=...`, tri et aperçus des commerces/produits.
+- `/connexion` et `/inscription` — formulaires distincts avec validation côté client uniquement.
+- `/a-propos`, `/aide-contact`, `/conditions-utilisation` — informations provisoires, sans coordonnées ni conditions légales inventées.
 
-Seule la route `/` existe actuellement. Les navigations actives mènent à cette route ou aux sections `#restaurants`, `#categories` et `#commerces`. Les routes de connexion, inscription, catalogue, recherche, fiches restaurants et informations ne sont pas créées par cette intégration. Leurs éléments restent non interactifs ; la recherche accepte et valide la saisie mais signale explicitement son indisponibilité sans simuler de résultats ni rediriger vers une page absente. Les établissements d’exemple sont marqués « Maquette », sans note numérique, fiche fictive ni favori actif.
+Les six slugs sont `restaurants`, `alimentation`, `mode`, `beaute`, `electronique` et `maison`. Recherche et catégorie se combinent en ET et peuvent être retirées indépendamment. Maison possède un état vide explicite. Les titres des restaurants de l’accueil mènent à leur sélection propre dans le catalogue. Les boutons « Voir le commerce » et « Voir les produits » ouvrent un aperçu accessible des seules données de maquette.
 
-## Prérequis
+Le contexte commerçant est conservé entre `/connexion?profil=commercant` et `/inscription?profil=commercant`. Les formulaires ne créent ni compte, ni session, ni faux succès. Le mot de passe oublié n’annonce aucun envoi. Aucune donnée d’authentification n’est enregistrée localement.
 
-- Node.js 20.9 ou une version ultérieure
-- npm
+## Favoris et données de démonstration
+
+Le `FavoritesProvider` partage les favoris entre pages et onglets. Seuls des identifiants stables sont conservés sous `delifast:favorites:v1`. Les JSON invalides et erreurs de stockage sont interceptés; si le stockage est bloqué, les favoris restent utilisables en mémoire et l’interface avertit que la persistance n’est pas garantie.
+
+Les établissements, produits, prix, disponibilités et notes sont fictifs. Les photographies locales sont optimisées en WebP et affichées avec `next/image`, avec chargement différé des visuels secondaires. Le visuel téléphone de Tech Express remplace une source de maquette indisponible. Les contenus et droits des visuels devront être validés avant une éventuelle publication réelle.
 
 ## Démarrage local
+
+Node.js 20.9 ou ultérieur et npm sont requis pour l’application. Les tests unitaires utilisent la suppression native des types TypeScript de Node : Node.js 22.6 ou ultérieur est requis pour `npm test` (recette exécutée sous Node 24).
 
 ```bash
 npm install
 npm run dev
 ```
 
-Ouvrir ensuite [http://localhost:3000](http://localhost:3000).
+Ouvrir [http://localhost:3000](http://localhost:3000). Aucune variable d’environnement n’est nécessaire pour ce frontend. Le modèle `.env.example` reste réservé à une future intégration distincte; aucune clé secrète ne doit être placée dans une variable `NEXT_PUBLIC_*` ni dans Git.
 
-Le fichier `.env.example` documente les variables publiques prévues pour une future intégration Supabase. Il n’est pas nécessaire pour démarrer la page d’accueil. Si l’intégration est ajoutée, copier ce modèle vers `.env.local` et remplir uniquement les valeurs de développement appropriées. Ne jamais placer une clé `service_role` ou une clé secrète dans une variable `NEXT_PUBLIC_*` ou dans Git.
-
-## Commandes
+## Vérifications
 
 ```bash
-npm run dev       # serveur de développement
-npm run typecheck # contrôle TypeScript sans émission de fichiers
+npm run typecheck # TypeScript strict
 npm run lint      # ESLint
-npm run build     # build de production
-npm run start     # démarrer le build de production
+npm test          # node:test natif : catégories, recherche et stockage favoris
+npm run build     # build de production, sans déploiement
+npm run start     # servir localement le build
 ```
 
-## Organisation
+Aucun framework ni dépendance de test n’a été ajouté. Les captures de recette de l’accueil et du catalogue se trouvent dans `docs/qa/`, en formats desktop et mobile.
 
-- `src/app/` — routes et layout de l’App Router
-- `src/components/` — composants d’interface et de mise en page
-- `src/features/` — futurs modules fonctionnels
-- `src/lib/` — utilitaires partagés, validation et emplacements d’intégration
-- `src/hooks/`, `src/types/`, `src/styles/` — hooks, types et styles partagés
-- `public/` — ressources statiques
-- `docs/` — documentation d’architecture, de base de données et de sécurité
-- `tests/` — emplacements prévus pour les tests unitaires, d’intégration et end-to-end
+## Organisation et limites
 
-## Supabase
+- `src/app/` : routes, layout et styles globaux.
+- `src/components/` : accueil, authentification et pages d’information.
+- `src/features/catalogue/` : catégories, données fictives et interactions catalogue.
+- `src/features/favorites/` : provider, stockage et bouton partagé.
+- `public/images/` : ressources locales optimisées.
+- `tests/unit/` : tests automatisés sans dépendance supplémentaire.
 
-L’intégration Supabase reste à configurer. Aucune table, migration, fonction Auth, clé ou bucket n’a été créé dans le projet distant. Les migrations SQL Supabase seront l’autorité unique du futur schéma PostgreSQL; Prisma n’est pas utilisé.
+Cette version ne comporte ni intégration Supabase, ni authentification réelle, paiement, commande backend, administration, abonnement ou déploiement de production. Ces sujets restent hors du périmètre frontend.

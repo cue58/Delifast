@@ -2,19 +2,21 @@ import Image from "next/image";
 import Link from "next/link";
 import HomeMenu from "@/components/home/home-menu";
 import HomeSearch from "@/components/home/home-search";
+import { FavoriteButton, FavoritesStorageNotice } from "@/features/favorites/favorite-button";
 
 const categories = [
-  { icon: "🍲", title: "Restaurants", caption: "Plats & spécialités" },
-  { icon: "🥬", title: "Alimentation", caption: "Produits du quotidien" },
-  { icon: "👗", title: "Mode & accessoires", caption: "Style et tendances" },
-  { icon: "✨", title: "Beauté & bien-être", caption: "Prendre soin de soi" },
-  { icon: "🎧", title: "Électronique", caption: "Tech et accessoires" },
-  { icon: "🏡", title: "Maison", caption: "Équipement et déco" },
+  { icon: "🍲", title: "Restaurants", caption: "Plats & spécialités", slug: "restaurants" },
+  { icon: "🥬", title: "Alimentation", caption: "Produits du quotidien", slug: "alimentation" },
+  { icon: "👗", title: "Mode & accessoires", caption: "Style et tendances", slug: "mode" },
+  { icon: "✨", title: "Beauté & bien-être", caption: "Prendre soin de soi", slug: "beaute" },
+  { icon: "🎧", title: "Électronique", caption: "Tech et accessoires", slug: "electronique" },
+  { icon: "🏡", title: "Maison", caption: "Équipement et déco", slug: "maison" },
 ] as const;
 
 const sampleRestaurants = [
   {
     image: "/images/home/restaurant-grill.webp",
+    id: "saveurs-du-faso",
     alt: "Assiette de grillades",
     tag: "Grillades",
     name: "Saveurs du Faso",
@@ -22,6 +24,7 @@ const sampleRestaurants = [
   },
   {
     image: "/images/home/restaurant-pizza.webp",
+    id: "la-piazza",
     alt: "Pizza fraîchement préparée",
     tag: "Pizzeria",
     name: "La Piazza",
@@ -29,6 +32,7 @@ const sampleRestaurants = [
   },
   {
     image: "/images/home/restaurant-meal.webp",
+    id: "le-jardin-gourmand",
     alt: "Repas grillé et accompagnements",
     tag: "Cuisine variée",
     name: "Le Jardin Gourmand",
@@ -41,16 +45,22 @@ const otherBusinesses = [
     icon: "🛍️",
     title: "Mode & accessoires",
     description: "Vêtements, chaussures, sacs et accessoires.",
+    links: [{ label: "Explorer la mode", slug: "mode" }],
   },
   {
     icon: "💆🏾",
     title: "Beauté & bien-être",
     description: "Produits de beauté, soins et univers bien-être.",
+    links: [{ label: "Explorer cet univers", slug: "beaute" }],
   },
   {
     icon: "📱",
     title: "Électronique & maison",
     description: "Équipements, accessoires et essentiels du quotidien.",
+    links: [
+      { label: "Électronique", slug: "electronique" },
+      { label: "Maison", slug: "maison" },
+    ],
   },
 ] as const;
 
@@ -75,10 +85,10 @@ export default function Home() {
             <Link href="#commerces">Commerces</Link>
           </nav>
           <div className="nav-actions">
-            <span className="btn btn-outline unavailable-control" aria-label="Connexion indisponible : la route /connexion n’existe pas encore" title="La page de connexion n’est pas encore disponible">Connexion</span>
-            <span className="btn btn-primary unavailable-control" aria-label="Inscription indisponible : la route /inscription n’existe pas encore" title="La page d’inscription n’est pas encore disponible">
+            <Link className="btn btn-outline" href="/connexion">Connexion</Link>
+            <Link className="btn btn-primary" href="/inscription">
               Créer un compte <span aria-hidden="true">↗</span>
-            </span>
+            </Link>
             <HomeMenu />
           </div>
         </div>
@@ -127,15 +137,15 @@ export default function Home() {
                 <h2 id="categories-title">Tout ce qui vous fait envie</h2>
                 <p className="section-sub">La cuisine en vedette, et d’autres univers à découvrir au fil de vos besoins.</p>
               </div>
-              <span className="text-link text-link-unavailable" aria-label="Catalogue indisponible">Voir toutes les catégories</span>
+              <Link className="text-link" href="/catalogue">Voir toutes les catégories →</Link>
             </div>
             <div className="category-grid">
               {categories.map((category) => (
-                <article className="category" key={category.title}>
+                <Link className="category" key={category.title} href={`/catalogue?categorie=${category.slug}`}>
                   <div className="category-icon" aria-hidden="true">{category.icon}</div>
                   <strong>{category.title}</strong>
                   <small>{category.caption}</small>
-                </article>
+                </Link>
               ))}
             </div>
           </div>
@@ -149,7 +159,7 @@ export default function Home() {
                 <h2 id="restaurants-title">Les restaurants à la une</h2>
                 <p className="section-sub">Parcourez les adresses gourmandes et laissez-vous inspirer par leurs spécialités.</p>
               </div>
-              <span className="text-link text-link-unavailable" aria-label="La page restaurants n’est pas disponible">Explorer les restaurants</span>
+              <Link className="text-link" href="/catalogue?categorie=restaurants">Explorer les restaurants →</Link>
             </div>
             <div className="restaurant-grid">
               {sampleRestaurants.map((restaurant) => (
@@ -162,11 +172,11 @@ export default function Home() {
                       sizes="(max-width: 680px) 48vw, (max-width: 950px) 48vw, 380px"
                     />
                     <span className="tag">{restaurant.tag}</span>
-                    <span className="heart" aria-hidden="true">♡</span>
+                    <FavoriteButton itemId={restaurant.id} label={restaurant.name} />
                   </div>
                   <div className="restaurant-info">
                     <div className="restaurant-title-row">
-                      <h3>{restaurant.name}</h3>
+                      <h3><Link href={`/catalogue?${new URLSearchParams({ q: restaurant.name, categorie: "restaurants" }).toString()}`}>{restaurant.name}</Link></h3>
                       <span className="rating demo-rating">Maquette</span>
                     </div>
                     <p>{restaurant.description}</p>
@@ -179,8 +189,9 @@ export default function Home() {
               ))}
             </div>
             <p className="demo-disclaimer">
-              Visuels et établissements fictifs, repris de la maquette. Aucun avis n’est réel et ces cartes ne mènent pas à des fiches partenaires.
+              Visuels et établissements fictifs, repris de la maquette. Aucun avis n’est réel; les liens ouvrent leur sélection de démonstration dans le catalogue.
             </p>
+            <FavoritesStorageNotice />
           </div>
         </section>
 
@@ -191,7 +202,7 @@ export default function Home() {
                 <div className="section-kicker">Le goût d’abord</div>
                 <h2>La bonne cuisine mérite d’être trouvée.</h2>
                 <p>Découvrez les menus, comparez les spécialités et contactez directement les restaurants pour vos envies du moment.</p>
-                <Link className="btn btn-primary" href="#restaurants">Découvrir les restaurants <span aria-hidden="true">↗</span></Link>
+                <Link className="btn btn-primary" href="/catalogue?categorie=restaurants">Découvrir les restaurants <span aria-hidden="true">↗</span></Link>
               </div>
               <div className="food-banner-visual">
                 <Image
@@ -213,7 +224,7 @@ export default function Home() {
                 <h2 id="commerces-title">Vos autres commerces, au même endroit</h2>
                 <p className="section-sub">Delifast s’ouvre aussi aux boutiques et commerces de proximité.</p>
               </div>
-              <Link className="text-link" href="#categories">Tout explorer →</Link>
+              <Link className="text-link" href="/catalogue">Tout explorer →</Link>
             </div>
             <div className="other-grid">
               {otherBusinesses.map((business) => (
@@ -221,7 +232,13 @@ export default function Home() {
                   <div className="symbol" aria-hidden="true">{business.icon}</div>
                   <h3>{business.title}</h3>
                   <p>{business.description}</p>
-                  <Link href="#categories">Voir les catégories →</Link>
+                  <div className="other-card-links">
+                    {business.links.map((item) => (
+                      <Link key={item.slug} href={`/catalogue?categorie=${item.slug}`}>
+                        {item.label} →
+                      </Link>
+                    ))}
+                  </div>
                 </article>
               ))}
             </div>
@@ -252,8 +269,8 @@ export default function Home() {
               <p className="footer-intro">Les restaurants à l’honneur, les commerces à portée de découverte. Delifast, votre marketplace au Burkina Faso.</p>
             </div>
             <div><h4>Découvrir</h4><div className="footer-links"><Link href="#restaurants">Restaurants</Link><Link href="#categories">Catégories</Link><Link href="#commerces">Commerces</Link></div></div>
-            <div><h4>Votre compte</h4><div className="footer-links"><span className="inactive-link">Connexion · bientôt</span><span className="inactive-link">Créer un compte · bientôt</span><span className="inactive-link">Espace commerçant · bientôt</span></div></div>
-            <div><h4>Informations</h4><div className="footer-links"><span className="inactive-link">À propos</span><span className="inactive-link">Aide &amp; contact</span><span className="inactive-link">Conditions d’utilisation</span></div></div>
+            <div><h4>Votre compte</h4><div className="footer-links"><Link href="/connexion">Connexion</Link><Link href="/inscription">Créer un compte</Link><Link href="/connexion?profil=commercant">Espace commerçant</Link></div></div>
+            <div><h4>Informations</h4><div className="footer-links"><Link href="/a-propos">À propos</Link><Link href="/aide-contact">Aide &amp; contact</Link><Link href="/conditions-utilisation">Conditions d’utilisation</Link></div></div>
           </div>
           <div className="copyright"><span>© {year} Delifast. Tous droits réservés.</span><span>Fait pour découvrir les bonnes adresses du Burkina Faso.</span></div>
         </div>
@@ -261,11 +278,8 @@ export default function Home() {
 
       <nav className="mobile-nav" aria-label="Navigation mobile">
         <Link className="active" href="/" aria-current="page"><span aria-hidden="true">⌂</span>Accueil</Link>
-        <Link href="#restaurants"><span aria-hidden="true">🍽️</span>Restaurants</Link>
-        <Link href="#categories"><span aria-hidden="true">▦</span>Explorer</Link>
-        <span className="mobile-nav-unavailable" aria-label="Compte indisponible : connexion non disponible">
-          <span aria-hidden="true">♙</span>Compte
-        </span>
+        <Link href="/catalogue"><span aria-hidden="true">▦</span>Explorer</Link>
+        <Link href="/connexion"><span aria-hidden="true">♙</span>Compte</Link>
       </nav>
     </>
   );

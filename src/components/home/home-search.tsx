@@ -1,11 +1,13 @@
 "use client";
 
 import { useRef, useState, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
 
 export default function HomeSearch() {
   const [query, setQuery] = useState("");
   const [feedback, setFeedback] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -17,9 +19,8 @@ export default function HomeSearch() {
       return;
     }
 
-    setFeedback(
-      "La page de recherche n’est pas encore disponible. Aucune recherche n’a été lancée.",
-    );
+    const params = new URLSearchParams({ q: trimmedQuery });
+    router.push(`/catalogue?${params.toString()}`);
   }
 
   return (
@@ -38,7 +39,7 @@ export default function HomeSearch() {
           }}
           placeholder="Un restaurant, un plat, un commerce…"
           aria-label="Rechercher un restaurant, un plat ou un commerce"
-          aria-invalid={feedback.startsWith("Saisissez") || undefined}
+          aria-invalid={feedback ? true : undefined}
           aria-describedby="search-status"
         />
         <button className="btn btn-primary" type="submit">Rechercher</button>
